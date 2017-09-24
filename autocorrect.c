@@ -15,7 +15,7 @@ char* best_match(char* wrong_command) {
     int match_found = 0;
   
     /* Open the command for reading. */
-    fp = popen("compgen -c", "r");
+    fp = popen("bash -c 'compgen -c'", "r");
 
     if (fp == NULL) {
         exit(1);
@@ -35,7 +35,6 @@ char* best_match(char* wrong_command) {
             strcpy(match, command);
         }
     }
-  
     /* close */
     pclose(fp);
     if(!match_found) {
@@ -46,12 +45,12 @@ char* best_match(char* wrong_command) {
 }
 
 int levenshtein(const char *s, int m, const char *t, int n) {
-    int dp[m+1][n+1];
+    int dp[m+1][n+1], i, j;
     
        // Fill d[][] in bottom up manner
-       for (int i=0; i<=m; i++)
+       for (i=0; i<=m; i++)
        {
-           for (int j=0; j<=n; j++)
+           for (j=0; j<=n; j++)
            {
                // If first string is empty, only option is to
                // isnert all characters of second string
