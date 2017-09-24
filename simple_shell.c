@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include <autocorrect.h>
 
 #define SIZE 10
 
@@ -45,6 +47,7 @@ int main(void)
 {
     char **input;
     pid_t child_pid;
+    int child_exit_code;
 
     while(1) {
         putchar('>');
@@ -75,6 +78,26 @@ int main(void)
                 */
                 if(execvp(input[0], input) < 0) {
                     perror("Unable to execute the command");
+                    char* match = best_match(input[0]);
+                    if(match == NULL) {
+                        exit(1);
+                    }
+                    strcpy(input[0], match);
+                    free(match);
+                    /*
+                        Choice to run the best match
+                    */
+                    printf("Did you mean:%s?(y/n)", match);
+                    if(getchar() == 'y' || getchar() == 'Y') {
+                        /*
+                            Replace child with matched process
+                            TODO: Put match in a shared memory and execute from parent so that cd and exit can work
+                        */
+                        if(execvp(input[0], input) < 0) {
+                            perror("Unable to execute the new command");
+                            exit(1);
+                        }
+                    }
                     exit(1);
                 }
             }
@@ -82,7 +105,7 @@ int main(void)
                 /*
                     wait for the child to die
                 */
-                wait(child_pid, NULL, 0);
+                waitpid(child_pid, &child_exit_code, 0);
             }
         }
         /* It is always to good to free the allocated memory */

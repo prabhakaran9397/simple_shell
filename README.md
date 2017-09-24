@@ -6,7 +6,7 @@ Shell is a program used to access the OS system calls.
 Here is a simple program which uses fork and execvp to illustrate it.
 
 ```
-$gcc simple_shell.c -o shell
+$make
 $./shell
 >ls
 README.md  shell  simple_shell.c
@@ -30,4 +30,14 @@ README.md  shell  simple_shell.c
 #define SIZE 10
 >exit
 $
+```
+
+Using Autocorrect
+
+```
+>midir test
+Unable to execute the command: No such file or directory
+Did you mean:mkdir?(y/n)y
+>ls
+test
 ```
